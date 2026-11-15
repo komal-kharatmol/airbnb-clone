@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int        @id @default(autoincrement())
+  name      String
+  email     String     @unique
+  password  String
+  createdAt DateTime   @default(now())
+  listings  Listing[]
+  bookings  Booking[]
+  reviews   Review[]
+  wishlist  Wishlist[]
+}
+
+model Listing {
+  id            Int        @id @default(autoincrement())
+  title         String
+  description   String
+  location      String
+  category      String     @default("City")
+  price         Int
+  guests        Int        @default(1)
+  bedrooms      Int        @default(1)
+  images        String // JSON array string
+  amenities     String // JSON array string
+
+  // new: dataset / map fields
+  latitude      Float?
+  longitude     Float?
+  propertyType  String?
+  neighbourhood String?
+  beds          Int?
+  bathrooms     Float?
+  isSuperhost   Boolean    @default(false)
+
+  createdAt     DateTime   @default(now())
+  hostId        Int
+  host          User       @relation(fields: [hostId], references: [id], onDelete: Cascade)
+  bookings      Booking[]
+  reviews       Review[]
+  wishlisted    Wishlist[]
+}
+
+model Booking {
+  id         Int      @id @default(autoincrement())
+  listingId  Int
+  userId     Int
+  startDate  DateTime
+  endDate    DateTime
+  totalPrice Int
+  status     String   @default("CONFIRMED") // CONFIRMED | CANCELLED
+  createdAt  DateTime @default(now())
+  listing    Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  review     Review?
+}
+
+model Review {
+  id             Int      @id @default(autoincrement())
+  rating         Int
+  comment        String
+  // new: Airbnb's 6 sub-ratings (null = fall back to the overall rating)
+  cleanliness    Int?
+  accuracy       Int?
+  checkIn        Int?
+  communication  Int?
+  locationRating Int?
+  valueRating    Int?
+  createdAt      DateTime @default(now())
+  userId         Int
+  listingId      Int
+  bookingId      Int?     @unique // optional so imported reviews don't need a booking
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing        Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  booking        Booking? @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+model Wishlist {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  listingId Int
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, listingId])
+}
+

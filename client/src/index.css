@@ -1,0 +1,134 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------- Design tokens ---------- */
+:root {
+  --ink: #222222;
+  --muted: #717171;
+  --line: #dddddd;
+  --soft: #f7f7f7;
+  --brand: #ff385c;
+  --brand-gradient: linear-gradient(to right, #e61e4d 0%, #e31c5f 50%, #d70466 100%);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-white antialiased;
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    color: var(--ink);
+  }
+
+  /* Every button: smooth transition + press feedback */
+  button {
+    @apply transition-all duration-200 active:scale-95 disabled:cursor-not-allowed disabled:active:scale-100;
+  }
+
+  a {
+    @apply transition-colors duration-200;
+  }
+
+  ::selection {
+    background: #ffd6dd;
+  }
+
+  /* Custom scrollbars */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #c4c4c4 transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: #c4c4c4;
+    border-radius: 999px;
+    border: 3px solid #ffffff;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background: #8a8a8a;
+  }
+}
+
+@layer components {
+  /* Generic form input (used by Host form etc.) */
+  .input {
+    @apply w-full rounded-lg border border-[#B0B0B0] px-3 py-2.5 text-[#222222] outline-none transition-all duration-200 placeholder:text-[#717171] hover:border-[#222222] focus:border-[#222222] focus:ring-1 focus:ring-[#222222];
+  }
+
+  /* Solid coral that turns into the Airbnb gradient on hover */
+  .btn,
+  .btn-brand {
+    @apply font-semibold text-white disabled:opacity-50;
+    background: var(--brand);
+  }
+  .btn {
+    @apply rounded-lg px-5 py-2.5;
+  }
+  .btn:hover:not(:disabled),
+  .btn-brand:hover:not(:disabled) {
+    background-image: var(--brand-gradient);
+  }
+
+  /* Always-gradient primary action (modal Continue button) */
+  .btn-gradient {
+    @apply font-semibold text-white disabled:opacity-60;
+    background-image: var(--brand-gradient);
+  }
+  .btn-gradient:hover:not(:disabled) {
+    filter: brightness(0.94);
+    box-shadow: 0 6px 16px rgba(230, 30, 77, 0.3);
+  }
+
+  .btn-outline {
+    @apply rounded-lg border border-[#B0B0B0] px-4 py-2 text-sm font-medium text-[#222222] hover:border-[#222222] hover:bg-[#F7F7F7];
+  }
+
+  /* Skeleton loader block */
+  .skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e4e4e4 37%, #f0f0f0 63%);
+    background-size: 800px 100%;
+    animation: shimmer 1.4s infinite linear;
+    border-radius: 0.5rem;
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ---------- Animations ---------- */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes popIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.animate-fade { animation: fadeIn 0.2s ease-out both; }
+.animate-pop { animation: popIn 0.22s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
