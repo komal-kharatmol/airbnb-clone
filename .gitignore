@@ -1,0 +1,10 @@
+
+# Local data and temporary files
+server/prisma/data/
+*.db
+*.sqlite
+*.sqlite3
+*.backup
+*.bak
+frontend-files.txt
+frontend-fix.txt
